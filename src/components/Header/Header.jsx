@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link } from 'react-router-dom'; 
 import classes from './Header.module.css';
 import { BiCart } from 'react-icons/bi';
 import { HiOutlineLocationMarker } from 'react-icons/hi';
