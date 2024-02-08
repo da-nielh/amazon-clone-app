@@ -36,7 +36,7 @@ function Results() {
                 ) : (
                     <div className={classes.product__container}>
                         {result?.map((product) => (
-                            <ProductCard key={product.id} product={product} /> // Corrected key value
+                            <ProductCard key={product.id} product={product} renderAdd={true} /> // Corrected key value
                         ))}
                     </div>
                 )}

@@ -1,18 +1,25 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { Link } from 'react-router-dom'; 
 import classes from './Header.module.css';
 import { BiCart } from 'react-icons/bi';
 import { HiOutlineLocationMarker } from 'react-icons/hi';
 import { IoIosSearch } from 'react-icons/io';
 import LowerHeader from './LowerHeader';
+import { DataContext } from '../DataProvider/DataProvider';
 
 function Header() {
+
+    const [{baske}, dispatch] = useContext(DataContext)
+    // console.log(baske.length);
+    const totalItem = baske?.reduce((amount, item) => {
+        return item.amount + amount
+    },0)
+
     return (
         <>
-            <section>
+            <section className={classes.fixed}>
                 <div className={classes.header__container}>
                     <div className={classes.logo__container}>
-                        {/* Use Link component with 'to' prop for navigation */}
                         <Link to='/'>Your Logo Here</Link>
                     </div>
 
@@ -55,7 +62,7 @@ function Header() {
                         </Link>
                         <Link to='/cart' className={classes.cart}>
                             <BiCart size={35} />
-                            <span>0</span>
+                            <span>{totalItem}</span>
                             <h4>cart</h4>
                         </Link>
                     </div>

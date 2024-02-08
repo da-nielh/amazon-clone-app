@@ -5,6 +5,12 @@
     font-style: normal;
 }
 
+.fixed {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
 .header__container {
     background-color: #1a1a1a;
     display: flex;
