@@ -1,0 +1,21 @@
+.logo__container .img{
+    background-image: url(https://m.media-amazon.com/images/S/sash/mPGmT0r6IeTyIee.png);
+    margin: 0 auto;
+    margin-top: 10px;
+    background-position: -5px -130px;
+    height: 31px;
+    width: 103px;
+    text-align: center !important;
+}
+
+.form__container {
+    border: 1px solid lightgray;
+}
+
+.form__container , .form__container form  {
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    padding: 20px;
+}
