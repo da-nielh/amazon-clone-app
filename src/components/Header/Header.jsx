@@ -6,10 +6,11 @@ import { HiOutlineLocationMarker } from 'react-icons/hi';
 import { IoIosSearch } from 'react-icons/io';
 import LowerHeader from './LowerHeader';
 import { DataContext } from '../DataProvider/DataProvider';
+import {auth} from '../../Utility/firebase'
 
 function Header() {
 
-    const [{baske}, dispatch] = useContext(DataContext)
+    const [{user, baske}, dispatch] = useContext(DataContext)
     // console.log(baske.length);
     const totalItem = baske?.reduce((amount, item) => {
         return item.amount + amount
@@ -52,9 +53,25 @@ function Header() {
                                 </select>
                             </Link>
                         </div>
-                        <Link to='/Auth' className={classes.signin__container}>
-                            <p>Hello, sign in</p>
-                            <span>Account & List</span>
+                        <Link to={!user && '/Auth'} className={classes.signin__container}>
+                            <div className={classes.auth__link}>
+                                Hello, 
+                                {
+                                    user?(<div>
+                                        {user?.email?.split('@')[0]}
+                                    </div>):(
+                                    <>
+                                        <div>sign in</div>
+                                    </>
+                                    )
+                                }
+                            </div>
+                            {
+                                user?(<div>
+                                    <span onClick={() => auth.signOut()}>sign out</span>
+                                </div>):(<span>Account & List</span>)
+                            }
+                            
                         </Link>
                         <Link to='/orders' className={classes.order__return__container}>
                             <p>Returns</p>

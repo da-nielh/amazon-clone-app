@@ -2,7 +2,8 @@ import { useReducer } from "react"
 import { Type } from "./action.type"
 
 export const initialState = {
-    baske:[]
+    baske:[],
+    user:null
 }
 
 export const reduser = (state, action) => {
@@ -40,6 +41,12 @@ export const reduser = (state, action) => {
                 return{
                     ...state, 
                     baske: newBasket
+                }
+
+            case Type.SET_USER:
+                return {
+                    ...state, 
+                    user:action.user
                 }
 
         default:

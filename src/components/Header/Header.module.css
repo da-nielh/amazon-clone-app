@@ -125,8 +125,9 @@
     color: white;
 }
 
-.order__container p {
+.order__container .auth__link {
     font-size: 10px;
+    display: flex;
 }
 
 .language {
