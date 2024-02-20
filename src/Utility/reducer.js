@@ -43,6 +43,12 @@ export const reduser = (state, action) => {
                     baske: newBasket
                 }
 
+            case Type.EMPITY_BASKET:
+                return {
+                    ...state,
+                    baske: []
+                }
+
             case Type.SET_USER:
                 return {
                     ...state, 

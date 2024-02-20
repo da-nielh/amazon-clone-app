@@ -3,15 +3,20 @@ import Layout from '../../components/Layout/Layout'
 import classes from './Payment.module.css'
 import { DataContext } from '../../components/DataProvider/DataProvider'
 import ProductCard from '../../components/Product/ProductCard'
+import {PulseLoader} from "react-spinners"
 
 import {useStripe, useElements, CardElement} from '@stripe/react-stripe-js';
 import { colors } from '@mui/material'
 import CurrencyFormat from '../../components/CurrencyFormat/CurrencyFormat'
 
 import { axiosInstance } from '../../Api/axios'
+import { db } from '../../Utility/firebase'
+import { useNavigate } from 'react-router-dom'
+import { Type } from '../../Utility/action.type'
+
 
 function Payment() {
-  const [{user, baske}] = useContext(DataContext)
+  const [{user, baske}, dispatch] = useContext(DataContext)
     
   const totalItem = baske?.reduce((amount, item) => {
       return item.amount + amount
@@ -23,8 +28,11 @@ function Payment() {
 
   const [cardError, setCardError] = useState(null)
 
+  const [processing, setProcessing] = useState(false)
+
   const stripe = useStripe();
   const elements = useElements();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     // to show the error type
@@ -33,22 +41,51 @@ function Payment() {
   }
 
   const handlePayment = async(e) => {
-    e.paymentDefault();
+    e.preventDefault();
 
     try {
+      setProcessing(true)
       // Step 1: backend || functions --> contact to the client secret
       const response = await axiosInstance({
         method: 'POST',
         url: `/payment/create?total=${total*100}`,
       });
       console.log(response.data);
-    } catch (error){
-      console.log(error);
-    }
+      const clientSecret = response.data?.clientSecret
 
     // Step 2: client side (react side confirmation) by using Stripe
 
-    // Step 3: After confirmation --> order firestore database save, clear Basket
+      const {paymentIntent} = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method:{
+            card: elements.getElement(CardElement)
+          }
+        }
+      )
+      // console.log(paymentIntent);
+      // Step 3: After confirmation --> order firestore database save, clear Basket
+      await db
+        .collection("users")
+        .doc(user.uid)
+        .collection("orders")
+        .doc(paymentIntent.id)
+        .set({
+          baske: baske,
+          amount: paymentIntent.amount,
+          created: paymentIntent.created
+      })
+
+      // make the basket empity
+
+      dispatch({type: Type.EMPITY_BASKET})
+
+      setProcessing(false)
+      navigate("/orders", {state:{msg: 'you have placed new Order'}})
+    } catch (error){
+      console.log(error);
+      setProcessing(false)
+    }
   }
 
   return (
@@ -107,7 +144,17 @@ function Payment() {
                           Total Order :&emsp;<CurrencyFormat amount={total}/>
                         </span>
                       </div>
-                      <button type='submit'>Pay now</button>
+                      <button type='submit'>
+                        {
+                          processing?(
+                            <div className={classes.loading}>
+                              <p>pleace wait...</p>
+                            </div>
+                          ):(
+                            'Pay now'
+                          )
+                        }
+                      </button>
                     </div>
                   </form>
                 </div>

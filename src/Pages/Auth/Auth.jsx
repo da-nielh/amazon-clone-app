@@ -1,6 +1,6 @@
 import React, { useState, Context, useContext } from 'react'
 import classes from './Auth.module.css'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import {auth} from '../../Utility/firebase'
 import {signInWithEmailAndPassword, createUserWithEmailAndPassword} from 'firebase/auth'
 import {DataContext} from '../../components/DataProvider/DataProvider'
@@ -13,6 +13,9 @@ function Auth() {
   const [error, setError] = useState('')
   const [{user}, dispatch] = useContext(DataContext)
   const navigate = useNavigate()
+
+  const navStateData = useLocation()
+  // console.log(navStateData);
 
   console.log(user);
 
@@ -27,7 +30,7 @@ function Auth() {
           type:Type.SET_USER,
           user:userInfo.user
         })
-        navigate('/')
+        navigate(navStateData?.state?.redirect || '/')
       }) 
       .catch((err) => (setError(err.message)))
     }else{
@@ -37,6 +40,7 @@ function Auth() {
           type:Type.SET_USER,
           user:userInfo.user
         })
+        navigate(navStateData?.state?.redirect || '/')
       })
       .catch((err) => setError(err.message))
     }
@@ -67,6 +71,18 @@ function Auth() {
           }
 
           <h1>Sign in</h1>
+
+          {
+            navStateData?.state?.msg && (
+              <p style={{
+                padding: '5px',
+                textAlign: 'center',
+                color: 'red',
+              }}>
+                {navStateData?.state?.msg}
+              </p>
+            )
+          }
 
           <form action="">
             <div className={classes.email__container}>
